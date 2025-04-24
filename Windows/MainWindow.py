@@ -43,12 +43,14 @@ class MainWindow(QMainWindow):
         else:
             self.get_destination()
             print(self.destination_file)
-
         python = "python" if os.name == "nt" else "python3"
         try:
             subprocess.run(
                 [python, "deobfuscator.py", "-i", self.source_file, "-o", self.destination_file]
             )
             SuccessWindow("200", "OK").exec()
+            with open(self.destination_file, "r", encoding="utf-8") as f:
+                self.ui.filename_label.setText(f"Current file: {os.path.basename(self.destination_file)}")
+                self.ui.textspace_edit.setPlainText("\n".join(line.strip() for line in f.readlines()))
         except Exception as ex:
             CriticalWindow("Critical error", str(ex)).exec()

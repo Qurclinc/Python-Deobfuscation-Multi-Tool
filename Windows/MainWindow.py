@@ -19,27 +19,30 @@ class MainWindow(QMainWindow):
         self.setFixedSize(WIDTH, HEIGHT)
         self.source_file = ""
         self.destination_file = ""
+        self.ui.deobfuscate_btn.setText("Деобфусцировать")
+        self.ui.selectFile_btn.setText("Выбрать файл")
         
         self.ui.selectFile_btn.clicked.connect(self.open_file)
         self.ui.deobfuscate_btn.clicked.connect(self.deobfuscate)
 
     
     def open_file(self):
-        filepath, _ = QFileDialog.getOpenFileName(self, "Open file", "", "Python Files (*.py)")
+        filepath, _ = QFileDialog.getOpenFileName(self, "Открыть файл", "", "Python Files (*.py)")
         if filepath:
             self.source_file = os.path.abspath(filepath)
             with open(self.source_file, "r") as f:
                 self.ui.textspace_edit.setPlainText("\n".join(line.strip() for line in f.readlines()))
-                self.ui.filename_label.setText(f"Current file: {os.path.basename(self.source_file)}")
+                self.ui.filename_label.setText(f"Текущий файл: {os.path.basename(self.source_file)}")
 
     def get_destination(self):
-        filepath, _ = QFileDialog.getSaveFileName(self, "Choose file", "Output", "Python Files (*.py)")
+        filepath, _ = QFileDialog.getSaveFileName(self, "Выберите файл", "Output/decoded.py", "Python Files (*.py)")
         if filepath:
             self.destination_file = os.path.abspath(f"{filepath}") 
 
     def deobfuscate(self):
         if (not(self.source_file)):
-            CriticalWindow("Deobfuscation error", "Select input file first!").exec()
+            CriticalWindow("Ошибка деобфускации", "Сначала выберите входной файл!").exec()
+            return
         else:
             self.get_destination()
             print(self.destination_file)
@@ -48,9 +51,9 @@ class MainWindow(QMainWindow):
             subprocess.run(
                 [python, "deobfuscator.py", "-i", self.source_file, "-o", self.destination_file]
             )
-            SuccessWindow("200", "OK").exec()
+            SuccessWindow(" ", "Деобфускация прошла успешно!").exec()
             with open(self.destination_file, "r", encoding="utf-8") as f:
-                self.ui.filename_label.setText(f"Current file: {os.path.basename(self.destination_file)}")
-                self.ui.textspace_edit.setPlainText("\n".join(line.strip() for line in f.readlines()))
+                self.ui.filename_label.setText(f"Текущий файл: {os.path.basename(self.destination_file)}")
+                self.ui.textspace_edit.setPlainText("".join(line for line in f.readlines()))
         except Exception as ex:
-            CriticalWindow("Critical error", str(ex)).exec()
+            CriticalWindow("Ошибка", str(ex)).exec()

@@ -18,7 +18,7 @@ def crack(result, source_file, destination_file):
             if os.name != "nt" 
             else ["python", "Services/DeRecursionizer.py", "-i", source_file, "-o", destination_file]
         )
-        return ("[INFO] Skipping...", Colors.green)
+        return ("[INFO] Pyobfuscate cracked successfully", Colors.green)
         # os.system(f"python Services/DeRecursionizer.py -i {source_file} -o {destination_file}") if os.name == "nt" else os.system(f"python3 Services/DeRecursionizer.py -i {source_file} -o {destination_file}")
         # deobfuscator = DeRecursionizer(source_file, destination_file)
         # deobfuscator.deobfuscate()

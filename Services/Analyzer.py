@@ -1,4 +1,3 @@
-import re
 
 class Analyzer:
 
@@ -11,6 +10,8 @@ class Analyzer:
             3: "Marshal"
         }
         self.data = ""
+
+#TODO: I will improve it one day I promise... 
 
     def analyze(self, filepath):
         with open(filepath, "r") as f:

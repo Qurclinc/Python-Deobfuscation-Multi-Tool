@@ -78,7 +78,7 @@ with open(destination_file, "w", encoding="utf-8") as f:
 
 
 
-
+# Legacy
 # import requests
 # from pystyle import Colors
 

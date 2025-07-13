@@ -1,3 +1,4 @@
 chardet
 requests
 pystyle
+screeninfo

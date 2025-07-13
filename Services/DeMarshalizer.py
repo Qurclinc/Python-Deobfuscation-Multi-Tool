@@ -28,16 +28,7 @@ class DeMarhsalizer(BaseDeobfuscator):
             print(Colorate.Color(Colors.red, "[FAIL] Unable to connect to remote host. Check your internet connection."))
             exit(1)
 
-    def deobfuscate(self):
-        data = eval(f"b'{self.sanitarize(self.data)}'")
-        reversed_data = data[::-1]
-        code_obj = marshal.loads(reversed_data)
-
-        with open(self.tmp_filepath, "wb") as pyc:
-            pyc.write(self.magic)
-            marshal.dump(code_obj, pyc)
-
-        response = self.send_file()
+    def get_response(self, response):
         if response.status_code == 200:
             with open(self.destination_file, "wb") as f:
                 f.write(response.content)
@@ -45,6 +36,28 @@ class DeMarhsalizer(BaseDeobfuscator):
             return ("[FAIL] Marshal obfuscation wasn't cracked.", Colors.red)
 
         return ("[SUCCESS] Marshal obfuscation was cracked successfully.", Colors.green)
+    
+    def write_binary_file(self, code_obj):
+        with open(self.tmp_filepath, "wb") as pyc:
+            pyc.write(self.magic)
+            marshal.dump(code_obj, pyc)
+
+    def deobfuscate(self):
+        data = eval(f"b'{self.sanitarize(self.data)}'")
+        if "[::-1]" in self.data:
+            reversed_data = data[::-1]
+        else:
+            reversed_data = data
+        code_obj = marshal.loads(reversed_data)
+
+        self.write_binary_file(code_obj)
+        
+
+        response = self.send_file()
+        return self.get_response(response)
 
     def __del__(self):
-        os.remove(self.tmp_filepath)
+        try:
+            os.remove(self.tmp_filepath)
+        except FileNotFoundError:
+            pass

@@ -11,10 +11,11 @@ class BaseDeobfuscator:
 
     def read_file(self, filepath):
         with open(filepath, "r") as f:
-            return "".join([i.strip() for i in f.readlines()])
+            return "\n".join([i.strip() for i in f.readlines()])
         
     def write_file(self, filepath, data):
-        with open(filepath, "w") as f:
+        mode = "wb" if isinstance(data, bytes) else "w"
+        with open(filepath, mode) as f:
             f.write(data)
 
     def deobfuscate(self):
